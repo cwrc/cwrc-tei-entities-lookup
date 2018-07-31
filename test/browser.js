@@ -1,6 +1,8 @@
 'use strict';
 
-let geonames = require('../src/index.js');
+let cwrcLookup = require('../src/index.js');
+cwrcLookup.setSearchRoot('https://beta.cwrc.ca/');
+
 const path = require('path')
 const tape = require('tape');
 var _test = require('tape-promise').default;
@@ -8,21 +10,19 @@ const test = _test(tape) // decorate tape to allow promises
 const sinon = require('sinon')
 const fetchMock = require('fetch-mock');
 
-const queryString = 'smith';
+const queryString = 'john';
 const queryStringWithNoResults = 'ldfjk';
 const queryStringForTimeout = "chartrand";
 const queryStringForError = "cuff";
-const queryStringForMissingDescriptionInResult = 'blash';
 const expectedResultLength = 10;
 const emptyResultFixture = JSON.stringify(require('./httpResponseMocks/noResults.json'));
 const resultsFixture = JSON.stringify(require('./httpResponseMocks/results.json'));
-const noDescResultsFixture = JSON.stringify(require('./httpResponseMocks/resultsWitoutDescription.json'));
 
 var clock;
 
 // setup server mocks
 
-let uriBuilderFn = geonames.getPlaceLookupURI;
+let uriBuilderFn = cwrcLookup.getPersonLookupURI;
 
 fetchMock.get(uriBuilderFn(queryString), resultsFixture);
 fetchMock.get(uriBuilderFn(queryStringWithNoResults), emptyResultFixture);
@@ -37,7 +37,6 @@ fetchMock.get(uriBuilderFn(queryStringForTimeout), (url, opts)=> {
     Promise.resolve()
 });
 fetchMock.get(uriBuilderFn(queryStringForError), 500);
-fetchMock.get(uriBuilderFn(queryStringForMissingDescriptionInResult), noDescResultsFixture)
 
 
 // babel-plugin-istanbul adds instrumentation to the browserified/babelified bundle, during babelification.
@@ -60,49 +59,30 @@ function doObjectsHaveSameKeys(...objects){
 
 test('lookup builder', (assert)=> {
     assert.plan(1);
-    assert.comment('getPlaceLookupURI');
-    assert.ok(geonames.getPlaceLookupURI(queryString).includes(queryString), 'should contain the query string');
+    assert.comment('getPersonLookupURI');
+    assert.ok(cwrcLookup.getPersonLookupURI(queryString).includes(queryString), 'should contain the query string');
 });
 
 
-test('findPlace', async function(assert){
+test('findPerson', async function(assert){
     let thisAssert = assert
    // thisAssert.plan(21);
-    let lookupFn = geonames.findPlace;
+    let lookupFn = cwrcLookup.findPerson;
     thisAssert.equal(typeof lookupFn, 'function', 'is a function');
     let results = await lookupFn(queryString);
     thisAssert.ok(Array.isArray(results), 'should return an array of results');
     thisAssert.ok(results.length <= expectedResultLength, `should return fewer than or equal to ${expectedResultLength} results`);
     results.forEach(singleResult => {
         thisAssert.ok(doObjectsHaveSameKeys(singleResult, {
-            nameType: '',
             id: '',
             uri: '',
             uriForDisplay: '',
-            externalLink: '',
             name: '',
             repository: '',
-            originalQueryString: '',
-            description: ''
+            originalQueryString: ''
         }), 'all results have correct keys')
         thisAssert.equal(singleResult.originalQueryString, queryString, 'each result should return the original query string')
     })
-
-    thisAssert.comment('with a result from geonames with no Description');
-    results = await lookupFn(queryStringForMissingDescriptionInResult);
-    thisAssert.ok(Array.isArray(results), 'should return an array of results');
-    thisAssert.ok(doObjectsHaveSameKeys(results[0], {
-            nameType: '',
-            id: '',
-            uri: '',
-            uriForDisplay: '',
-            externalLink: '',
-            name: '',
-            repository: '',
-            originalQueryString: '',
-            description: ''
-        }), 'should still have all correct keys')
-    thisAssert.equal(results[0].description, 'No description available', 'should show missing description message')
 
     thisAssert.comment('with no results');
     results = await lookupFn(queryStringWithNoResults);

@@ -22,7 +22,7 @@
   "scripts": {
     "semantic-release": "semantic-release",
     "cm": "git-cz",
-    "_precommit": "npm run test && npm run check-coverage",
+    "precommit": "npm run test && npm run check-coverage",
     "browserify": "mkdirp build && browserify test/development.js -o build/development.js --debug -t [ babelify --presets [ es2015 ] ]",
     "watch": "mkdirp build && watchify test/development.js -o build/development.js --debug --verbose -t [ babelify --presets [ es2015 ] ]",
     "test": "mkdirp coverage && npm run test:electron && npm run generate-coverage",
@@ -30,7 +30,7 @@
     "test:electron": "cross-env NODE_ENV=test browserify test/browser.js | browser-run --static . | node test/extract-coverage.js | faucet ",
     "test:chrome": "cross-env NODE_ENV=test browserify test/browser.js | browser-run --static . -b chrome | node test/extract-coverage.js | faucet ",
     "generate-coverage": "istanbul report --root coverage lcov",
-    "check-coverage": "istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
+    "check-coverage": "istanbul check-coverage --statements 75 --branches 80 --functions 60 --lines 75",
     "report-coverage": "cat ./coverage/lcov.info | codecov",
     "travis-deploy-once": "travis-deploy-once"
   },
