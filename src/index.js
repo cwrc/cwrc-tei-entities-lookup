@@ -1,13 +1,13 @@
 'use strict';
 
-let entityRoot = '';
+let entityRoot = ''
 function setEntityRoot(url) {
-    entityRoot = url;
+    entityRoot = url
 }
 
-let searchRoot = '';
+let searchRoot = ''
 function setSearchRoot(url) {
-    searchRoot = url;
+    searchRoot = url
 }
 
 /*
@@ -68,15 +68,14 @@ function getTitleLookupURI(queryString) {
 
 function callCWRC(url, queryString) {
 
-        return fetchWithTimeout(url).then((parsedJSON)=>{
+        return fetchWithTimeout(url, {credentials: 'same-origin'}).then((parsedJSON)=>{
             console.log(parsedJSON)
             return parsedJSON.response.objects ? parsedJSON.response.objects.map(
                 (record) => {
                     let id = record.solr_doc.PID
                     let name = record.solr_doc.fgs_label_s
                     let uri = entityRoot + '/'+ record.object_url
-                    let uriForDisplay = uri.replace('http', 'https')
-                    return {id: uri, uri, uriForDisplay, name, repository: 'CWRC', originalQueryString: queryString}
+                    return {id: uri, uri, uriForDisplay: uri, name, repository: 'CWRC', originalQueryString: queryString}
                 }) : []
         })
 
