@@ -66,7 +66,7 @@ function getTitleLookupURI(queryString) {
     return getEntitySourceURI(queryString, 'title')
 }
 
-function callCWRC(url, queryString) {
+function callCWRC(url, queryString, nameType) {
 
         return fetchWithTimeout(url, {credentials: 'same-origin'}).then((parsedJSON)=>{
             console.log(parsedJSON)
@@ -75,26 +75,26 @@ function callCWRC(url, queryString) {
                     let id = record.solr_doc.PID
                     let name = record.solr_doc.fgs_label_s
                     let uri = entityRoot + '/'+ record.object_url
-                    return {id: uri, uri, uriForDisplay: uri, name, repository: 'CWRC', originalQueryString: queryString}
+                    return {id, uri, uriForDisplay: uri, name, nameType, repository: 'CWRC', originalQueryString: queryString}
                 }) : []
         })
 
 }
 
 function findPerson(queryString) {
-    return callCWRC(getPersonLookupURI(queryString), queryString)
+    return callCWRC(getPersonLookupURI(queryString), queryString, 'person')
 }
 
 function findPlace(queryString) {
-    return callCWRC(getPlaceLookupURI(queryString), queryString)
+    return callCWRC(getPlaceLookupURI(queryString), queryString, 'place')
 }
 
 function findOrganization(queryString) {
-    return callCWRC(getOrganizationLookupURI(queryString), queryString)
+    return callCWRC(getOrganizationLookupURI(queryString), queryString, 'organization')
 }
 
 function findTitle(queryString) {
-    return callCWRC(getTitleLookupURI(queryString), queryString)
+    return callCWRC(getTitleLookupURI(queryString), queryString, 'title')
 }
 
 module.exports = {

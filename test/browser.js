@@ -78,6 +78,7 @@ test('findPerson', async function(assert){
             uri: '',
             uriForDisplay: '',
             name: '',
+            nameType: '',
             repository: '',
             originalQueryString: ''
         }), 'all results have correct keys')
