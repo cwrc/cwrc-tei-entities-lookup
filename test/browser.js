@@ -1,7 +1,11 @@
 'use strict';
 
+const searchRoot = 'https://beta.cwrc.ca/';
+const entityRoot = 'https://commons.cwrc.ca/';
+
 let cwrcLookup = require('../src/index.js');
-cwrcLookup.setSearchRoot('https://beta.cwrc.ca/');
+cwrcLookup.setSearchRoot(searchRoot);
+cwrcLookup.setEntityRoot(entityRoot);
 
 const path = require('path')
 const tape = require('tape');
@@ -63,6 +67,11 @@ test('lookup builder', (assert)=> {
     assert.ok(cwrcLookup.getPersonLookupURI(queryString).includes(queryString), 'should contain the query string');
 });
 
+test('get/set roots', (assert)=> {
+    assert.plan(2);
+    assert.equal(cwrcLookup.getSearchRoot(), searchRoot, 'searchRoot should be the same');
+    assert.equal(cwrcLookup.getEntityRoot(), entityRoot, 'entityRoot should be the same');
+});
 
 test('findPerson', async function(assert){
     let thisAssert = assert

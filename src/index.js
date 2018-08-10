@@ -4,10 +4,16 @@ let entityRoot = ''
 function setEntityRoot(url) {
     entityRoot = url
 }
+function getEntityRoot() {
+    return entityRoot
+}
 
 let searchRoot = ''
 function setSearchRoot(url) {
     searchRoot = url
+}
+function getSearchRoot() {
+    return searchRoot
 }
 
 /*
@@ -99,7 +105,9 @@ function findTitle(queryString) {
 
 module.exports = {
     setEntityRoot: setEntityRoot,
+    getEntityRoot: getEntityRoot,
     setSearchRoot: setSearchRoot,
+    getSearchRoot: getSearchRoot,
     findPerson: findPerson,
     findPlace: findPlace,
     findOrganization: findOrganization,
