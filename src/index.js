@@ -78,9 +78,9 @@ function callCWRC(url, queryString, nameType) {
             console.log(parsedJSON)
             return parsedJSON.response.objects ? parsedJSON.response.objects.map(
                 (record) => {
-                    let id = record.solr_doc.PID
-                    let name = record.solr_doc.fgs_label_s
-                    let uri = entityRoot + '/'+ record.object_url
+                    let id = record.PID
+                    let name = record.object_label
+                    let uri = entityRoot + '/'+ id
                     return {id, uri, uriForDisplay: uri, name, nameType, repository: 'CWRC', originalQueryString: queryString}
                 }) : []
         })
