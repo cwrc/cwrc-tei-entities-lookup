@@ -16,6 +16,72 @@ function getSearchRoot() {
     return searchRoot
 }
 
+let projectLogoRoot = ''
+function setProjectLogoRoot(url) {
+    projectLogoRoot = url
+}
+function getProjectLogoRoot() {
+    return projectLogoRoot
+}
+
+let projectUrl = ''
+async function setProjectLookupURI(url) {
+    projectUrl = url
+    return doProjectLookup()
+}
+
+let projects = {}
+async function doProjectLookup() {
+    return fetch(projectUrl, {
+        method: 'get',
+        credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(async (response) => {
+        const data = await response.json()
+        for (let projectKey in data) {
+            const project = data[projectKey]
+            
+            let logoFilename = undefined
+            const fieldLogo = project.field_logo
+            if (fieldLogo !== undefined) {
+                for (let key in fieldLogo) {
+                    const entry = fieldLogo[key]
+                    if (entry.length > 0) {
+                        logoFilename = entry[0].filename
+                    }
+                }
+            }
+            
+            let projectId = undefined
+            const fieldTopLevel = project.field_top_level_collection
+            if (fieldTopLevel !== undefined && fieldTopLevel.und !== undefined) {
+                const und = fieldTopLevel.und
+                if (und.length > 0 && und[0].pid !== undefined) {
+                    const pid = und[0].pid
+                    const namespace = pid.substring(0, pid.indexOf(':'))
+                    if (namespace !== '') {
+                        projectId = namespace
+                    }
+                }
+            }
+            
+            if (logoFilename !== undefined && projectId !== undefined) {
+                if (projectId === 'islandora') {
+                    projectId = 'cwrc'
+                }
+                if (projects[projectId] === undefined) {
+                    projects[projectId] = logoFilename
+                }
+            }
+        }
+        return projects;
+    }, (reason) => {
+        console.warn('project lookup failed', reason)
+    })
+}
+
 /*
      config is passed through to fetch, so could include things like:
      {
@@ -81,7 +147,16 @@ function callCWRC(url, queryString, nameType) {
                     let id = record.PID
                     let name = record.object_label
                     let uri = entityRoot + '/'+ id
-                    return {id, uri, uriForDisplay: uri, name, nameType, repository: 'CWRC', originalQueryString: queryString}
+                    
+                    let data = {id, uri, uriForDisplay: uri, name, nameType, repository: 'CWRC', originalQueryString: queryString}
+                    
+                    let namespace = id.substring(0, id.indexOf(':'))
+                    let logo = projects[namespace]
+                    if (logo !== undefined) {
+                        data.logo = projectLogoRoot + '/' + logo
+                    }
+                    
+                    return data
                 }) : []
         })
 
@@ -108,6 +183,11 @@ module.exports = {
     getEntityRoot: getEntityRoot,
     setSearchRoot: setSearchRoot,
     getSearchRoot: getSearchRoot,
+    
+    getProjectLogoRoot: getProjectLogoRoot,
+    setProjectLogoRoot: setProjectLogoRoot,
+    setProjectLookupURI: setProjectLookupURI,
+    
     findPerson: findPerson,
     findPlace: findPlace,
     findOrganization: findOrganization,
