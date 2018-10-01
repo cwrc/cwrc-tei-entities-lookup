@@ -24,62 +24,52 @@ function getProjectLogoRoot() {
     return projectLogoRoot
 }
 
-let projectUrl = ''
-async function setProjectLookupURI(url) {
-    projectUrl = url
-    return doProjectLookup()
-}
-
 let projects = {}
-async function doProjectLookup() {
-    return fetch(projectUrl, {
-        method: 'get',
-        credentials: 'same-origin',
-        headers: {
-            'Accept': 'application/json'
-        }
-    }).then(async (response) => {
-        const data = await response.json()
-        for (let projectKey in data) {
-            const project = data[projectKey]
-            
-            let logoFilename = undefined
-            const fieldLogo = project.field_logo
-            if (fieldLogo !== undefined) {
-                for (let key in fieldLogo) {
-                    const entry = fieldLogo[key]
-                    if (entry.length > 0) {
-                        logoFilename = entry[0].filename
-                    }
-                }
-            }
-            
-            let projectId = undefined
-            const fieldTopLevel = project.field_top_level_collection
-            if (fieldTopLevel !== undefined && fieldTopLevel.und !== undefined) {
-                const und = fieldTopLevel.und
-                if (und.length > 0 && und[0].pid !== undefined) {
-                    const pid = und[0].pid
-                    const namespace = pid.substring(0, pid.indexOf(':'))
-                    if (namespace !== '') {
-                        projectId = namespace
-                    }
-                }
-            }
-            
-            if (logoFilename !== undefined && projectId !== undefined) {
-                if (projectId === 'islandora') {
-                    projectId = 'cwrc'
-                }
-                if (projects[projectId] === undefined) {
-                    projects[projectId] = logoFilename
-                }
-            }
-        }
-        return projects;
-    }, (reason) => {
-        console.warn('project lookup failed', reason)
+function doProjectLookup(url) {
+    return fetchWithTimeout(url, {credentials: 'same-origin'}).then((parsedJSON)=>{
+        projects = parseProjectsData(parsedJSON)
+        return projects
     })
+}
+function parseProjectsData(data) {
+    const parsedProjects = {}
+    for (let projectKey in data) {
+        const project = data[projectKey]
+        
+        let logoFilename = undefined
+        const fieldLogo = project.field_logo
+        if (fieldLogo !== undefined) {
+            for (let key in fieldLogo) {
+                const entry = fieldLogo[key]
+                if (entry.length > 0) {
+                    logoFilename = entry[0].filename
+                }
+            }
+        }
+        
+        let projectId = undefined
+        const fieldTopLevel = project.field_top_level_collection
+        if (fieldTopLevel !== undefined && fieldTopLevel.und !== undefined) {
+            const und = fieldTopLevel.und
+            if (und.length > 0 && und[0].pid !== undefined) {
+                const pid = und[0].pid
+                const namespace = pid.substring(0, pid.indexOf(':'))
+                if (namespace !== '') {
+                    projectId = namespace
+                }
+            }
+        }
+        
+        if (logoFilename !== undefined && projectId !== undefined) {
+            if (projectId === 'islandora') {
+                projectId = 'cwrc'
+            }
+            if (parsedProjects[projectId] === undefined) {
+                parsedProjects[projectId] = logoFilename
+            }
+        }
+    }
+    return parsedProjects
 }
 
 /*
@@ -186,7 +176,7 @@ module.exports = {
     
     getProjectLogoRoot: getProjectLogoRoot,
     setProjectLogoRoot: setProjectLogoRoot,
-    setProjectLookupURI: setProjectLookupURI,
+    setProjectLookupURI: doProjectLookup,
     
     findPerson: findPerson,
     findPlace: findPlace,

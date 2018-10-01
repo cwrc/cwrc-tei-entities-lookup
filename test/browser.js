@@ -87,7 +87,7 @@ test('project logo root', async (assert) => {
 
 test('project lookup', async (assert) => {
     assert.plan(1);
-    let projects = await cwrcLookup.setProjectLookupURI(projectUrl, assert)
+    let projects = await cwrcLookup.setProjectLookupURI(projectUrl)
     let projectKeys = []
     for (let key in projects) {
         projectKeys.push(key)
