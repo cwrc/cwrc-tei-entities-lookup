@@ -2,7 +2,10 @@
 
 const searchRoot = 'https://beta.cwrc.ca/';
 const entityRoot = 'https://commons.cwrc.ca/';
+
 const projectLogoRoot = 'https://beta.cwrc.ca/sites/default/files';
+const projectLookupUrl = 'foobar';
+const cwrcProjectId = 'cwrc:cwrc';
 
 let cwrcLookup = require('../src/index.js');
 cwrcLookup.setSearchRoot(searchRoot);
@@ -23,7 +26,6 @@ const expectedResultLength = 10;
 const emptyResultFixture = JSON.stringify(require('./httpResponseMocks/noResults.json'));
 const resultsFixture = JSON.stringify(require('./httpResponseMocks/results.json'));
 
-const projectUrl = 'foobar';
 const projectResultsFixture = JSON.stringify(require('./httpResponseMocks/projectResults.json'));
 
 var clock;
@@ -46,7 +48,7 @@ fetchMock.get(uriBuilderFn(queryStringForTimeout), (url, opts)=> {
 });
 fetchMock.get(uriBuilderFn(queryStringForError), 500);
 
-fetchMock.get(projectUrl, projectResultsFixture);
+fetchMock.get(projectLookupUrl, projectResultsFixture);
 
 
 // babel-plugin-istanbul adds instrumentation to the browserified/babelified bundle, during babelification.
@@ -79,15 +81,13 @@ test('get/set roots', (assert)=> {
     assert.equal(cwrcLookup.getEntityRoot(), entityRoot, 'entityRoot should be the same');
 });
 
-test('project logo root', async (assert) => {
-    assert.plan(1);
-    cwrcLookup.setProjectLogoRoot(projectLogoRoot)
-    assert.equal(cwrcLookup.getProjectLogoRoot(), projectLogoRoot, 'project logo root should be the same')
-});
-
 test('project lookup', async (assert) => {
     assert.plan(1);
-    let projects = await cwrcLookup.setProjectLookupURI(projectUrl)
+    let projects = await cwrcLookup.setProjectLookupConfig({
+        projectLookupUrl,
+        projectLogoRoot,
+        cwrcProjectId
+    })
     let projectKeys = []
     for (let key in projects) {
         projectKeys.push(key)

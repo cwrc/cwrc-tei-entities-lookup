@@ -17,16 +17,19 @@ function getSearchRoot() {
 }
 
 let projectLogoRoot = ''
-function setProjectLogoRoot(url) {
-    projectLogoRoot = url
-}
-function getProjectLogoRoot() {
-    return projectLogoRoot
-}
-
 let cwrcProjectId = ''
-function setCWRCProjectId(id) {
-    cwrcProjectId = id
+/**
+ * Set all the properties necessary for the project lookup, then perform the lookup
+ * @param {Object} config 
+ * @param {String} projectLogoRoot The root directory that project logos are located in
+ * @param {String} projectLookupUrl The actual url for the lookup
+ * @param {String} cwrcProjectId The ID assigned to the CWRC Commons project
+ * @returns {Object} The projects (namespace and logo)
+ */
+function setProjectLookupConfig(config) {
+    projectLogoRoot = config.projectLogoRoot
+    cwrcProjectId = config.cwrcProjectId
+    return doProjectLookup(config.projectLookupUrl)
 }
 
 let projects = {}
@@ -181,10 +184,7 @@ module.exports = {
     setSearchRoot: setSearchRoot,
     getSearchRoot: getSearchRoot,
     
-    getProjectLogoRoot: getProjectLogoRoot,
-    setProjectLogoRoot: setProjectLogoRoot,
-    setCWRCProjectId: setCWRCProjectId,
-    setProjectLookupURI: doProjectLookup,
+    setProjectLookupConfig: setProjectLookupConfig,
     
     findPerson: findPerson,
     findPlace: findPlace,
