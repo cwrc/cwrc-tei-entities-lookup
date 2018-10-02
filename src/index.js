@@ -24,6 +24,11 @@ function getProjectLogoRoot() {
     return projectLogoRoot
 }
 
+let cwrcProjectId = ''
+function setCWRCProjectId(id) {
+    cwrcProjectId = id
+}
+
 let projects = {}
 function doProjectLookup(url) {
     return fetchWithTimeout(url, {credentials: 'same-origin'}).then((parsedJSON)=>{
@@ -53,7 +58,12 @@ function parseProjectsData(data) {
             const und = fieldTopLevel.und
             if (und.length > 0 && und[0].pid !== undefined) {
                 const pid = und[0].pid
-                const namespace = pid.substring(0, pid.indexOf(':'))
+                let namespace
+                if (pid === cwrcProjectId) {
+                    namespace = 'cwrc'
+                } else {
+                    namespace = pid.substring(0, pid.indexOf(':'))
+                }
                 if (namespace !== '') {
                     projectId = namespace
                 }
@@ -61,9 +71,6 @@ function parseProjectsData(data) {
         }
         
         if (logoFilename !== undefined && projectId !== undefined) {
-            if (projectId === 'islandora') {
-                projectId = 'cwrc'
-            }
             if (parsedProjects[projectId] === undefined) {
                 parsedProjects[projectId] = logoFilename
             }
@@ -176,6 +183,7 @@ module.exports = {
     
     getProjectLogoRoot: getProjectLogoRoot,
     setProjectLogoRoot: setProjectLogoRoot,
+    setCWRCProjectId: setCWRCProjectId,
     setProjectLookupURI: doProjectLookup,
     
     findPerson: findPerson,
