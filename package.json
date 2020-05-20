@@ -2,77 +2,57 @@
   "name": "cwrc-tei-entities-lookup",
   "version": "0.0.0-development",
   "description": "Find entities (people, places, organizations) in CWRC.",
-  "main": "src/index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cwrc/cwrc-tei-entities-lookup.git"
-  },
   "keywords": [
     "viaf",
     "entity",
     "linked-data",
     "sparql"
   ],
-  "author": "Andrew MacDonald",
-  "license": "GPL-3.0",
+  "homepage": "https://github.com/cwrc/cwrc-tei-entities-lookup#readme",
   "bugs": {
     "url": "https://github.com/cwrc/cwrc-tei-entities-lookup/issues"
   },
-  "homepage": "https://github.com/cwrc/cwrc-tei-entities-lookup#readme",
+  "license": "GPL-3.0",
+  "author": "Andrew MacDonald",
+  "contributors": [
+    "Luciano Frizzera <lucaju@gmail.com>"
+  ],
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cwrc/cwrc-tei-entities-lookup.git"
+  },
   "scripts": {
     "semantic-release": "semantic-release",
     "cm": "git-cz",
-    "browserify": "mkdirp build && browserify test/development.js -o build/development.js --debug",
-    "watch": "mkdirp build && watchify test/development.js -o build/development.js --debug --verbose",
     "test": "jest",
     "report-coverage": "cat ./coverage/coverage-final.json | codecov",
     "travis-deploy-once": "travis-deploy-once"
   },
+  "dependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/plugin-transform-runtime": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "@babel/runtime-corejs2": "^7.5.5",
-    "babelify": "^10.0.0",
-    "browserify": "^16.2.3",
-    "codecov": "^3.5.0",
-    "commitizen": "^3.1.1",
-    "cz-conventional-changelog": "^2.1.0",
-    "fetch-mock": "^5.13.1",
-    "husky": "^2.1.0",
-    "jest": "^24.9.0",
-    "mkdirp": "0.5.1",
-    "semantic-release": "^15.13.12",
-    "travis-deploy-once": "^5.0.11",
-    "watchify": "^3.11.1"
+    "@babel/core": "^7.9.6",
+    "@babel/plugin-transform-runtime": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/runtime-corejs2": "^7.9.6",
+    "codecov": "^3.7.0",
+    "commitizen": "^4.1.2",
+    "cz-conventional-changelog": "^3.2.0",
+    "eslint": "^7.0.0",
+    "fetch-mock": "^9.9.0",
+    "husky": "^4.2.5",
+    "jest": "^26.0.1",
+    "semantic-release": "^17.0.7",
+    "travis-deploy-once": "^5.0.11"
   },
   "config": {
     "commitizen": {
-      "path": "node_modules/cz-conventional-changelog"
+      "path": "cz-conventional-changelog"
     }
   },
   "husky": {
     "hooks": {
       "pre-commit": "npm run test"
     }
-  },
-  "jest": {
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "./src/index.js"
-    ],
-    "coverageDirectory": "./coverage",
-    "coverageThreshold": {
-      "global": {
-        "branches": 65,
-        "functions": 70,
-        "lines": 90,
-        "statements": 80
-      }
-    },
-    "testMatch": [
-      "**/test/**/*.[jt]s?(x)"
-    ]
-  },
-  "dependencies": {}
+  }
 }
