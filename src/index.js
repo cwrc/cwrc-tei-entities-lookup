@@ -1,5 +1,3 @@
-'use strict';
-
 let entityRoot = '';
 const setEntityRoot = (url) => (entityRoot = url);
 const getEntityRoot = () => entityRoot;
@@ -10,6 +8,70 @@ const getSearchRoot = () => searchRoot;
 
 let projectLogoRoot = '';
 let cwrcProjectId = '';
+
+const findPerson = (queryString) => (
+	callCWRC(getPersonLookupURI(queryString), queryString, 'person')
+)
+const findPlace = (queryString) => callCWRC(getPlaceLookupURI(queryString), queryString, 'place');
+const findOrganization = (queryString) => (
+	callCWRC(getOrganizationLookupURI(queryString), queryString, 'organization')
+)
+const findTitle = (queryString) => callCWRC(getTitleLookupURI(queryString), queryString, 'title');
+
+const getPersonLookupURI = (queryString) => getEntitySourceURI(queryString, 'person');
+const getPlaceLookupURI = (queryString) => getEntitySourceURI(queryString, 'place');
+const getOrganizationLookupURI = (queryString) => getEntitySourceURI(queryString, 'organization');
+const getTitleLookupURI = (queryString) => getEntitySourceURI(queryString, 'title');
+
+// note that this method is exposed on the npm module to simplify testing,
+// i.e., to allow intercepting the HTTP call during testing, using sinon or similar.
+const getEntitySourceURI = (queryString, methodName) => {
+	return `${searchRoot}/search/${methodName}?query=${encodeURIComponent(
+		queryString
+	)}&limit=100&page=0`;
+};
+
+const callCWRC = async (url, queryString, nameType) => {
+	const response = await fetchWithTimeout(url, { credentials: 'same-origin' }).catch((error) => {
+		return error;
+	});
+
+	//if status not ok, through an error
+	if (!response.ok) {
+		throw new Error(
+			`Something wrong with the call to CWRC, possibly a problem with the network or the server. HTTP error: ${response.status}`
+		);
+	}
+
+	const responseJson = await response.json();
+
+	if (!responseJson.response.objects) return [];
+
+	const result = responseJson.response.objects.map((record) => {
+		const id = record.PID;
+		const name = record.object_label;
+		const uri = `${entityRoot}/${id}`;
+
+		const data = {
+			id,
+			uri,
+			uriForDisplay: uri,
+			name,
+			nameType,
+			repository: 'CWRC',
+			originalQueryString: queryString,
+		};
+
+		const namespace = id.substring(0, id.indexOf(':'));
+		const logo = projects[namespace];
+		if (logo !== undefined) data.logo = `${projectLogoRoot}/${logo}`;
+
+		return data;
+	});
+
+	return result;
+};
+
 /**
  * Set all the properties necessary for the project lookup, then perform the lookup
  * @param {Object} config
@@ -25,12 +87,10 @@ const setProjectLookupConfig = (config) => {
 };
 
 let projects = {};
-const doProjectLookup = async(url) => {
-
-	const response = await fetchWithTimeout(url, { credentials: 'same-origin' })
-        .catch((error) => {
-            return error;
-		});
+const doProjectLookup = async (url) => {
+	const response = await fetchWithTimeout(url, { credentials: 'same-origin' }).catch((error) => {
+		return error;
+	});
 
 	if (!response.ok) {
 		throw new Error(
@@ -111,72 +171,6 @@ const fetchWithTimeout = (url, config = {}, time = 30000) => {
 	// Returns a race between our timeout and the passed in promise
 	return Promise.race([fetch(url, config), timeout]);
 };
-
-// note that this method is exposed on the npm module to simplify testing,
-// i.e., to allow intercepting the HTTP call during testing, using sinon or similar.
-const getEntitySourceURI = (queryString, methodName) => {
-	return `${searchRoot}/search/${methodName}?query=${encodeURIComponent(queryString)}&limit=100&page=0`;
-};
-
-const getPersonLookupURI = (queryString) => getEntitySourceURI(queryString, 'person');
-
-const getPlaceLookupURI = (queryString) => getEntitySourceURI(queryString, 'place');
-
-const getOrganizationLookupURI = (queryString) => getEntitySourceURI(queryString, 'organization');
-
-const getTitleLookupURI = (queryString) => getEntitySourceURI(queryString, 'title');
-
-const callCWRC = async (url, queryString, nameType) => {
-
-	
-    const response = await fetchWithTimeout(url, { credentials: 'same-origin' })
-        .catch((error) => {
-            return error;
-		});
-		
-	//if status not ok, through an error
-	if (!response.ok) {
-		throw new Error(
-			`Something wrong with the call to CWRC, possibly a problem with the network or the server. HTTP error: ${response.status}`
-		);
-	}
-
-	const responseJson = await response.json();
-
-	if (!responseJson.response.objects) return []
-
-	const result = responseJson.response.objects.map((record) => {
-		const id = record.PID;
-		const name = record.object_label;
-		const uri = `${entityRoot}/${id}`;
-
-		const data = {
-			id,
-			uri,
-			uriForDisplay: uri,
-			name,
-			nameType,
-			repository: 'CWRC',
-			originalQueryString: queryString,
-		};
-
-		const namespace = id.substring(0, id.indexOf(':'));
-		const logo = projects[namespace];
-		if (logo !== undefined) data.logo = `${projectLogoRoot}/${logo}`;
-
-		return data;
-	});
-
-	return result;
-};
-
-const findPerson = (queryString) => callCWRC(getPersonLookupURI(queryString), queryString, 'person');
-
-const findPlace = (queryString) => callCWRC(getPlaceLookupURI(queryString), queryString, 'place');
-
-const findOrganization = (queryString) => callCWRC(getOrganizationLookupURI(queryString), queryString, 'organization');
-
-const findTitle = (queryString) => callCWRC(getTitleLookupURI(queryString), queryString, 'title');
 
 export default {
 	setEntityRoot,

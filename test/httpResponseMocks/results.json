@@ -1,8 +1,7 @@
 {
 	"response": {
 		"numFound": 5,
-		"objects": [
-			{
+		"objects": [{
 				"solr_doc": {
 					"fgs_label_s": "John Watts",
 					"RELS_EXT_isMemberOfCollection_uri_ms": [

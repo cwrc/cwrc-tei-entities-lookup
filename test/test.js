@@ -1,5 +1,3 @@
-'use strict';
-
 import fetchMock from 'fetch-mock';
 import cwrcLookup from '../src/index.js';
 
@@ -40,7 +38,7 @@ fetchMock.get(projectLookupUrl, projectResultsFixture);
 
 // from https://stackoverflow.com/a/35047888
 const doObjectsHaveSameKeys = (...objects) => {
-	const allKeys = objects.reduce((keys, object) => keys.concat(Object.keys(object)),[]);
+	const allKeys = objects.reduce((keys, object) => keys.concat(Object.keys(object)), []);
 	const union = new Set(allKeys);
 	return objects.every((object) => union.size === Object.keys(object).length);
 };
@@ -70,11 +68,13 @@ test('project lookup', async () => {
 		projectKeys.push(key);
 	}
 
-	expect(doObjectsHaveSameKeys(projects, {
-        cwrc: '',
-        reed: '',
-        orlando: '',
-    })).toBe(true);
+	expect(
+		doObjectsHaveSameKeys(projects, {
+			cwrc: '',
+			reed: '',
+			orlando: '',
+		})
+	).toBe(true);
 });
 
 test('findPerson', async () => {
@@ -86,16 +86,18 @@ test('findPerson', async () => {
 	expect(results.length).toBeLessThanOrEqual(expectedResultLength);
 
 	results.forEach((singleResult) => {
-        expect(doObjectsHaveSameKeys(singleResult, {
-            id: '',
-            uri: '',
-            uriForDisplay: '',
-            name: '',
-            nameType: '',
-            repository: '',
-            originalQueryString: '',
-            logo: '',
-		})).toBe(true);
+		expect(
+			doObjectsHaveSameKeys(singleResult, {
+				id: '',
+				uri: '',
+				uriForDisplay: '',
+				name: '',
+				nameType: '',
+				repository: '',
+				originalQueryString: '',
+				logo: '',
+			})
+		).toBe(true);
 		expect(singleResult.originalQueryString).toBe(queryString);
 	});
 });
@@ -104,7 +106,7 @@ test('findPerson - no results', async () => {
 	// with no results
 	expect.assertions(2);
 
-    const results = await cwrcLookup.findPerson(queryStringWithNoResults);
+	const results = await cwrcLookup.findPerson(queryStringWithNoResults);
 	expect(Array.isArray(results)).toBe(true);
 	expect(results.length).toBe(0);
 });
@@ -114,13 +116,11 @@ test('findPerson - server error', async () => {
 	expect.assertions(2);
 
 	let shouldBeNullResult = false;
-	shouldBeNullResult = await cwrcLookup
-		.findPerson(queryStringForError)
-		.catch(() => {
-			// an http error should reject the promise
-			expect(true).toBe(true);
-			return false;
-		});
+	shouldBeNullResult = await cwrcLookup.findPerson(queryStringForError).catch(() => {
+		// an http error should reject the promise
+		expect(true).toBe(true);
+		return false;
+	});
 	// a falsey result should be returned
 	expect(shouldBeNullResult).toBeFalsy();
 });

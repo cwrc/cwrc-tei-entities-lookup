@@ -14,7 +14,7 @@
 	"2": {
 		"field_logo": {
 			"en": [{
-                "filename": "rl_kempe.png"
+				"filename": "rl_kempe.png"
 			}]
 		},
 		"field_top_level_collection": {
@@ -32,7 +32,7 @@
 		"field_top_level_collection": {
 			"und": [{
 				"pid": "orlando:orlando"
-		    }]
+			}]
 		}
 	}
 }
