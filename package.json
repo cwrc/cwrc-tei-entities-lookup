@@ -23,27 +23,26 @@
     "url": "https://github.com/cwrc/cwrc-tei-entities-lookup.git"
   },
   "scripts": {
-    "semantic-release": "semantic-release",
     "cm": "git-cz",
     "test": "jest",
     "report-coverage": "cat ./coverage/coverage-final.json | codecov",
-    "travis-deploy-once": "travis-deploy-once"
+    "semantic-release": "semantic-release"
   },
   "dependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.10.5",
-    "@babel/plugin-transform-runtime": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
-    "@babel/runtime-corejs2": "^7.10.5",
-    "codecov": "^3.7.2",
-    "commitizen": "^4.1.2",
-    "cz-conventional-changelog": "^3.2.0",
-    "eslint": "^7.5.0",
-    "fetch-mock": "^9.10.5",
-    "husky": "^4.2.5",
-    "jest": "^26.1.0",
-    "semantic-release": "^17.1.1",
-    "travis-deploy-once": "^5.0.11"
+    "@babel/core": "^7.12.9",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/preset-env": "^7.12.7",
+    "@babel/runtime-corejs2": "^7.12.5",
+    "codecov": "^3.8.1",
+    "commitizen": "^4.2.2",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^7.14.0",
+    "fetch-mock": "^9.11.0",
+    "git-cz": "^4.7.5",
+    "husky": "^4.3.0",
+    "jest": "^26.6.3",
+    "semantic-release": "^17.3.0"
   },
   "config": {
     "commitizen": {
