@@ -1,38 +1,38 @@
 {
-	"1": {
-		"field_logo": {
-			"en": [{
-				"filename": "cwrclogo-vert-fullcolour_cropped.png"
-			}]
-		},
-		"field_top_level_collection": {
-			"und": [{
-				"pid": "cwrc:cwrc"
-			}]
-		}
-	},
-	"2": {
-		"field_logo": {
-			"en": [{
-				"filename": "rl_kempe.png"
-			}]
-		},
-		"field_top_level_collection": {
-			"und": [{
-				"pid": "reed:reed"
-			}]
-		}
-	},
-	"3": {
-		"field_logo": {
-			"en": [{
-				"filename": "orlando_tree-_blue_transparent_0.gif"
-			}]
-		},
-		"field_top_level_collection": {
-			"und": [{
-				"pid": "orlando:orlando"
-			}]
-		}
-	}
+  "1": {
+    "field_logo": {
+      "en": [{
+        "filename": "cwrclogo-vert-fullcolour_cropped.png"
+      }]
+    },
+    "field_top_level_collection": {
+      "und": [{
+        "pid": "cwrc:cwrc"
+      }]
+    }
+  },
+  "2": {
+    "field_logo": {
+      "en": [{
+        "filename": "rl_kempe.png"
+      }]
+    },
+    "field_top_level_collection": {
+      "und": [{
+        "pid": "reed:reed"
+      }]
+    }
+  },
+  "3": {
+    "field_logo": {
+      "en": [{
+        "filename": "orlando_tree-_blue_transparent_0.gif"
+      }]
+    },
+    "field_top_level_collection": {
+      "und": [{
+        "pid": "orlando:orlando"
+      }]
+    }
+  }
 }
